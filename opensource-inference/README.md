@@ -1,8 +1,8 @@
-# LLaMA 3 API Deployment
+# Open Source LLM 3 API Deployment
 
 ## Overview
 
-This repository provides a setup for deploying the LLaMA 3 API using Docker. The deployment leverages the `llama-cpp-python` package to serve the LLaMA model and is configured to dynamically adjust based on the system's resources.
+This repository provides a setup for deploying the Open Source LLM API using Docker. The deployment leverages the `llama-cpp-python` package to serve the LLaMA model and is configured to dynamically adjust based on the system's resources.
 
 ## Features
 
