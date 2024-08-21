@@ -1,0 +1,271 @@
+{
+    "$schema": "http://json-schema.org/draft/2019-09/schema#",
+    "$ref": "#/definitions/PowerProxyConfiguration",
+    "definitions": {
+        "PowerProxyConfiguration": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+                "clients": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Client"
+                    },
+                    "minItems": 1,
+                    "contains": {
+                        "type": "object",
+                        "properties": {
+                            "uses_entra_id_auth": {
+                                "const": true
+                            }
+                        },
+                        "required": [
+                            "uses_entra_id_auth"
+                        ]
+                    },
+                    "minContains": 0,
+                    "maxContains": 1
+                },
+                "plugins": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Plugin"
+                    }
+                },
+                "aoai": {
+                    "$ref": "#/definitions/Aoai"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "resource_group": {
+                    "type": "string"
+                },
+                "unique_prefix": {
+                    "type": "string"
+                },
+                "user_assigned_managed_identity_client_id": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "aoai"
+            ],
+            "allOf": [
+                {
+                    "not": {
+                        "required": [
+                            "fixed_client"
+                        ],
+                        "errorMessage": "'fixed_client' is not supported anymore. Please remove this field and set 'uses_entra_id_auth: true' for one single team to re-enable Entra ID auth."
+                    }
+                },
+                {
+                    "not": {
+                        "required": [
+                            "FIXED_CLIENT"
+                        ],
+                        "errorMessage": "'FIXED_CLIENT is not supported anymore. Please remove this field and set 'uses_entra_id_auth: true' for one single team to re-enable Entra ID auth."
+                    }
+                }
+            ]
+        },
+        "Client": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                }
+            },
+            "oneOf": [
+                {
+                    "required": [
+                        "name",
+                        "key"
+                    ]
+                },
+                {
+                    "required": [
+                        "name",
+                        "uses_entra_id_auth"
+                    ]
+                }
+            ]
+        },
+        "Plugin": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ]
+        },
+        "Aoai": {
+            "type": "object",
+            "properties": {
+                "endpoints": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Endpoint"
+                    },
+                    "minItems": 1
+                },
+                "mock_response": {
+                    "$ref": "#/definitions/MockResponse"
+                }
+            },
+            "oneOf": [
+                {
+                    "required": [
+                        "endpoints"
+                    ]
+                },
+                {
+                    "required": [
+                        "mock_response"
+                    ]
+                }
+            ]
+        },
+        "Endpoint": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "qt-uri-protocols": [
+                        "https"
+                    ]
+                },
+                "key": {
+                    "type": "string"
+                },
+                "non_streaming_fraction": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "connections": {
+                    "type": "object",
+                    "properties": {
+                        "limits": {
+                            "$ref": "#/definitions/Limits"
+                        },
+                        "timeouts": {
+                            "$ref": "#/definitions/Timeouts"
+                        }
+                    }
+                },
+                "virtual_deployments": {
+                    "$ref": "#/definitions/VirtualDeployments"
+                }
+            },
+            "required": [
+                "name",
+                "url"
+            ]
+        },
+        "Limits": {
+            "type": "object",
+            "properties": {
+                "max_keepalive_connections": {
+                    "type": "integer"
+                },
+                "max_connections": {
+                    "type": "integer"
+                },
+                "keepalive_expiry": {
+                    "type": "number"
+                }
+            }
+        },
+        "Timeouts": {
+            "type": "object",
+            "properties": {
+                "connect": {
+                    "type": "number"
+                },
+                "read": {
+                    "type": "number"
+                },
+                "write": {
+                    "type": "number"
+                },
+                "pool": {
+                    "type": "number"
+                }
+            }
+        },
+        "VirtualDeployments": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/VirtualDeployment"
+            },
+            "minItems": 1
+        },
+        "VirtualDeployment": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "standins": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/StandinDeployment"
+                    },
+                    "minItems": 1
+                }
+            },
+            "required": [
+                "name",
+                "standins"
+            ]
+        },
+        "StandinDeployment": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "non_streaming_fraction": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                }
+            },
+            "required": [
+                "name"
+            ]
+        },
+        "MockResponse": {
+            "type": "object",
+            "properties": {
+                "ms_to_wait_before_return": {
+                    "type": "integer"
+                },
+                "json": {
+                    "$ref": "#/definitions/JSON"
+                }
+            },
+            "required": [
+                "json"
+            ]
+        },
+        "JSON": {
+            "type": "object"
+        }
+    }
+}

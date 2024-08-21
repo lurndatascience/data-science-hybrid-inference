@@ -1,0 +1,2 @@
+MODEL="/models/${MODEL_NAME:-Meta-Llama-3-8B-Instruct-Q4_K_M.gguf}"
+MODEL_DOWNLOAD_URL="${MODEL_DOWNLOAD_URL:-https://huggingface.co/bartowski/Meta-Llama-3-8B-Instruct-GGUF/resolve/main/Meta-Llama-3-8B-Instruct-Q4_K_M.gguf?download=true}"
